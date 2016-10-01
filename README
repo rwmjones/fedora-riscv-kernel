@@ -1,0 +1,24 @@
+The Linux kernel for the Fedora/RISC-V project.
+https://fedoraproject.org/wiki/Architectures/RISC-V
+
+This is NOT the Linux kernel itself.  It is the build script and a few
+patches which we use to build the Linux kernel for the Fedora/RISC-V
+project.
+
+The actual Linux kernel source comes from the following fork:
+https://github.com/riscv/riscv-linux
+
+Requirements:
+
+ - Fedora 24+ (eg. x86_64) host.
+
+ - The cross-compiler toolchain:
+
+     dnf copr enable rjones/riscv
+     dnf install riscv-gnu-toolchain
+
+Build the kernel:
+
+ - Run 'make'
+
+The result is the 'vmlinux' file.  Note we do not use modules.
