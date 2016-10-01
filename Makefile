@@ -38,6 +38,11 @@ riscv-linux:
 	git clone https://github.com/riscv/riscv-linux $@-t
 	mv $@-t $@
 
+clean:
+	rm -f *~
+	rm -f vmlinux
+	rm -rf $(kdir)
+
 # This is for test-booting the kernel against a stage4 disk
 # image from https://fedorapeople.org/groups/risc-v/
 boot-stage4-in-qemu: stage4-disk.img
