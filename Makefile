@@ -58,6 +58,9 @@ kernel-headers.spec: kernel-headers.spec.in
 	sed -e 's,@ROOT@,$(ROOT),g' -e 's,@KERNEL_VERSION@,$(KERNEL_VERSION),g' < $^ > $@-t
 	mv $@-t $@
 
+upload-kernel: vmlinux
+	scp $^ fedorapeople.org:/project/risc-v/disk-images/
+
 clean:
 	rm -f *~
 	rm -f vmlinux
