@@ -22,3 +22,15 @@ Build the kernel:
  - Run 'make'
 
 The result is the 'vmlinux' file.  Note we do not use modules.
+
+Test the kernel:
+
+ - Get a stage4 disk image, for example from
+   https://fedorapeople.org/groups/risc-v/
+
+ - Get qemu-system-riscv from:
+
+     dnf copr enable rjones/riscv
+     dnf install riscv-qemu
+
+ - Run 'make boot-stage4-in-qemu'

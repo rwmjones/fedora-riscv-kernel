@@ -37,3 +37,13 @@ riscv-linux:
 	rm -rf $@ $@-t
 	git clone https://github.com/riscv/riscv-linux $@-t
 	mv $@-t $@
+
+# This is for test-booting the kernel against a stage4 disk
+# image from https://fedorapeople.org/groups/risc-v/
+boot-stage4-in-qemu: stage4-disk.img
+	$(MAKE) boot-in-qemu DISK=$<
+
+boot-in-qemu: $(DISK) $(vmlinux)
+	qemu-system-riscv -m 4G -kernel /usr/bin/bbl \
+	    -append vmlinux \
+	    -drive file=$(DISK),format=raw -nographic

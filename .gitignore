@@ -2,4 +2,5 @@
 
 /linux-4.1.26
 /riscv-linux
+/stage4-disk.img
 /vmlinux
