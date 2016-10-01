@@ -1,12 +1,17 @@
+ROOT            := $(shell pwd)
+
 # Note we cannot just choose these at random.  We must use versions
 # which are compatible with the qemu / hardware we are using and the
 # privspec.
 KERNEL_VERSION   = 4.1.26
 KERNEL_BRANCH    = linux-4.1.y-riscv
 
+# The version of Fedora we are building for.
+FEDORA           = 25
+
 kdir             = linux-$(KERNEL_VERSION)
 
-all: vmlinux
+all: vmlinux RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm
 
 vmlinux: $(kdir)/vmlinux
 	cp $^ $@
@@ -33,9 +38,24 @@ $(kdir)/Makefile: riscv-linux
 	cd $(kdir)-t && patch -p1 < ../0001-Fix-infinite-loop-in-__clear_user.patch
 	mv $(kdir)-t $(kdir)
 
+# This is a local cache of the upstream fork of Linux for RISC-V.
+# Having this ensures we don't need to keep downloading it.
 riscv-linux:
 	rm -rf $@ $@-t
 	git clone https://github.com/riscv/riscv-linux $@-t
+	mv $@-t $@
+
+# Kernel headers RPM.
+RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm: vmlinux kernel-headers.spec
+	rm -rf kernel-headers
+	mkdir -p kernel-headers/usr
+	$(MAKE) -C $(kdir) ARCH=riscv64 headers_install INSTALL_HDR_PATH=$(ROOT)/kernel-headers/usr
+	rpmbuild -ba kernel-headers.spec --define "_topdir $(ROOT)"
+	rm -r kernel-headers
+
+kernel-headers.spec: kernel-headers.spec.in
+	rm -f $@ $@-t
+	sed -e 's,@ROOT@,$(ROOT),g' -e 's,@KERNEL_VERSION@,$(KERNEL_VERSION),g' < $^ > $@-t
 	mv $@-t $@
 
 clean:
