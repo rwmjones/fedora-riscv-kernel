@@ -36,6 +36,9 @@ $(kdir)/Makefile: riscv-linux
 # Fix infinite loop when clearing memory
 # https://github.com/riscv/riscv-linux/commit/77148ef248f72bb96b5cacffc0a69bca445de214
 	cd $(kdir)-t && patch -p1 < ../0001-Fix-infinite-loop-in-__clear_user.patch
+# Fix broken __put_user
+# https://groups.google.com/a/groups.riscv.org/d/msg/sw-dev/KSjLZ_JCCkY/eoF0zclUGgAJ
+	cd $(kdir)-t && patch -p1 < ../0001-Fix-broken-__put_user-macro.patch
 	mv $(kdir)-t $(kdir)
 
 # This is a local cache of the upstream fork of Linux for RISC-V.
