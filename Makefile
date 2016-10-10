@@ -38,7 +38,8 @@ $(kdir)/Makefile: riscv-linux
 	cd $(kdir)-t && patch -p1 < ../0001-Fix-infinite-loop-in-__clear_user.patch
 # Fix broken __put_user
 # https://groups.google.com/a/groups.riscv.org/d/msg/sw-dev/KSjLZ_JCCkY/eoF0zclUGgAJ
-	cd $(kdir)-t && patch -p1 < ../0001-Fix-broken-__put_user-macro.patch
+# https://github.com/riscv/riscv-linux/commit/3d0905acd286a26dd59f00a4dfc78c5c95dfc019
+	cd $(kdir)-t && patch -p1 < ../0001-Properly-truncate-sub-word-values-in-__put_user.patch
 	mv $(kdir)-t $(kdir)
 
 # This is a local cache of the upstream fork of Linux for RISC-V.
