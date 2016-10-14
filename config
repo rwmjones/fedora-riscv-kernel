@@ -16,6 +16,9 @@ CONFIG_BLK_DEV_LOOP=y
 # Use ext4 in the stage4 disk.
 CONFIG_EXT4_FS=y
 
+# Needed to avoid cap_set_file errors when installing RPMs.
+CONFIG_EXT4_FS_SECURITY=y
+
 # Add networking and virtio, even though they don't work right now.
 CONFIG_NET_CORE=y
 CONFIG_NETDEVICES=y
