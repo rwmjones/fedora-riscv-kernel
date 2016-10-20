@@ -69,3 +69,8 @@ CONFIG_AUDIT=n
 # SysV IPC needed by GnuPG.
 CONFIG_SYSVIPC=y
 CONFIG_SYSVIPC_SYSCTL=y
+
+# Add XFS for running xfstests (to test libaio).
+CONFIG_XFS_FS=y
+CONFIG_XFS_QUOTA=y
+CONFIG_XFS_POSIX_ACL=y
