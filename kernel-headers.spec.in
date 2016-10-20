@@ -18,6 +18,10 @@ cp -a @ROOT@/kernel-headers/usr/include/* $RPM_BUILD_ROOT%{_includedir}/
 find $RPM_BUILD_ROOT%{_includedir} -name .install -delete
 find $RPM_BUILD_ROOT%{_includedir} -name ..install.cmd -delete
 
+# Avoids conflicts with librdmacm-devel package over trivial
+# permissions differences.
+chmod -R g-w $RPM_BUILD_ROOT%{_includedir}
+
 %files
 %{_includedir}/*
 
