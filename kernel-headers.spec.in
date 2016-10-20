@@ -5,6 +5,8 @@ Release:  1.fc25
 License:  GPLv2
 BuildArch: noarch
 
+Provides:  glibc-kernheaders = 3.0-46
+
 %description
 This is an interim kernel-headers package generated for the
 Fedora/RISC-V stage3 bootstrap.
