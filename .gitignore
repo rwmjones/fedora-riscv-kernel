@@ -3,8 +3,7 @@
 /RPMS/noarch/*.noarch.rpm
 /SRPMS/*.src.rpm
 
+/bbl
 /kernel-headers.spec
-/linux-4.1.26
-/riscv-linux
 /stage4-disk.img
 /vmlinux

@@ -1,7 +1,7 @@
 Summary:  RISC-V kernel headers interim package
 Name:     kernel-headers
 Version:  @KERNEL_VERSION@
-Release:  1.fc25
+Release:  1.fc27
 License:  GPLv2
 BuildArch: noarch
 
@@ -23,6 +23,9 @@ find $RPM_BUILD_ROOT%{_includedir} -name ..install.cmd -delete
 # Avoids conflicts with librdmacm-devel package over trivial
 # permissions differences.
 chmod -R g-w $RPM_BUILD_ROOT%{_includedir}
+
+# This has to match the mode of glibc-headers, else you get file conflicts.
+chmod 0755 $RPM_BUILD_ROOT%{_includedir}/scsi
 
 %files
 %{_includedir}/*

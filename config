@@ -1,37 +1,37 @@
-# Kernel command line, unfortunately has to be compiled in
-# because of the bootloader.
-CONFIG_CMDLINE="root=/dev/htifblk0 init=/init"
+# https://github.com/riscv/riscv-qemu/commit/039dbd521277bc0aab672203a1a199e4519094da
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_SERIAL_OF_PLATFORM=y
 
-# Use cross-compiler.
-CONFIG_CROSS_COMPILE=riscv64-unknown-elf-
-
-# Basic settings.
-CONFIG_FILE_LOCKING=y
-CONFIG_SYSFS=y
+# https://github.com/riscv/riscv-qemu/commit/3446cee04256753a29c45b033d643fcdea24fc72
+CONFIG_RISCV_PLIC=y
+CONFIG_HVC_RISCV_SBI=y
+CONFIG_VIRTIO=y
+CONFIG_VIRTIO_MMIO=y
+CONFIG_VIRTIO_BLK=y
+CONFIG_VIRTIO_NET=y
+CONFIG_VIRTIO_CONSOLE=y
+CONFIG_SCSI_VIRTIO=y
 
 # Loopback lets us build the stage4 disk.
 CONFIG_BLK_DEV=y
 CONFIG_BLK_DEV_LOOP=y
 
-# Use ext4 in the stage4 disk.
+# So we can use ext4 in the stage 4 disk (not impl yet).
 CONFIG_EXT4_FS=y
 
 # Needed to avoid cap_set_file errors when installing RPMs.
 CONFIG_EXT4_FS_SECURITY=y
 
-# Add networking and virtio, even though they don't work right now.
+CONFIG_FILE_LOCKING=y
 CONFIG_NET_CORE=y
 CONFIG_NETDEVICES=y
-CONFIG_VIRTIO=y
-CONFIG_VIRTIO_MMIO=y
-CONFIG_VIRTIO_MMIO_CMDLINE_DEVICES=y
-CONFIG_VIRTIO_NET=y
-CONFIG_VIRTIO_BLK=y
-CONFIG_VIRTIO_CONSOLE=y
-CONFIG_SCSI_VIRTIO=y
 
-# Stuff needed by systemd.
-# https://github.com/systemd/systemd/blob/master/README
+# For systemd:
+# https://cgit.freedesktop.org/systemd/systemd/tree/README
+CONFIG_TMPFS=y
+CONFIG_TMPFS_XATTR=y
+CONFIG_SYSFS=y
 CONFIG_DEVTMPFS=y
 CONFIG_CGROUPS=y
 CONFIG_INOTIFY_USER=y
@@ -48,7 +48,6 @@ CONFIG_DMIID=y
 CONFIG_BLK_DEV_BSG=y
 CONFIG_NET_NS=y
 CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
-# CONFIG_IPV6=y
 CONFIG_AUTOFS4_FS=y
 CONFIG_TMPFS_XATTR=y
 CONFIG_TMPFS_POSIX_ACL=y
@@ -65,6 +64,23 @@ CONFIG_EFIVAR_FS=y
 CONFIG_EFI_PARTITION=y
 CONFIG_RT_GROUP_SCHED=n
 CONFIG_AUDIT=n
+
+# Networking:
+CONFIG_NET=y
+CONFIG_PACKET=y
+CONFIG_UNIX=y
+CONFIG_INET=y
+CONFIG_BRIDGE=y
+CONFIG_IPV6=y
+
+# NFS client.
+CONFIG_NFS_FS=y
+CONFIG_NFS_V3=y
+CONFIG_NFS_V3_ACL=y
+CONFIG_NFS_V4=y
+CONFIG_NFS_V4_1=y
+CONFIG_NFS_V4_2=y
+CONFIG_NFS_FSCACHE=y
 
 # SysV IPC needed by GnuPG.
 CONFIG_SYSVIPC=y
