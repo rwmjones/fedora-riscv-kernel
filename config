@@ -90,3 +90,8 @@ CONFIG_SYSVIPC_SYSCTL=y
 CONFIG_XFS_FS=y
 CONFIG_XFS_QUOTA=y
 CONFIG_XFS_POSIX_ACL=y
+
+# For mock, avoids:
+# WARNING: tcmsg: [Errno 2] No such file or directory: '/proc/net/psched'
+# WARNING: the tc subsystem functionality is limited
+CONFIG_NET_SCHED=y
