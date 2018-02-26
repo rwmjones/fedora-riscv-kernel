@@ -28,6 +28,7 @@ riscv-linux/.config: config riscv-linux/Makefile
 
 # Build bbl with embedded kernel.
 bbl: vmlinux
+	rm -f $@
 	rm -rf riscv-pk/build
 	mkdir -p riscv-pk/build
 	cd riscv-pk/build && \
