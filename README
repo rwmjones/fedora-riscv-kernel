@@ -12,10 +12,9 @@ Requirements:
 
  - Fedora 24+ (eg. x86_64) host.
 
- - The cross-compiler toolchain:
-
-     dnf copr enable rjones/riscv
-     dnf install riscv-gnu-toolchain
+ - The cross-compiler toolchain.  We don't package this, but you can
+   either build it yourself or get it from
+   https://github.com/rwmjones/fedora-riscv-bootstrap
 
 Build the kernel:
 
