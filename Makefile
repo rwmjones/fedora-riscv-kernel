@@ -1,9 +1,5 @@
 ROOT            := $(shell pwd)
 
-# XXX Fix this so we have a local copy of the cross-compiling host tools.
-HOST_TOOLS      := $(ROOT)/../fedora-riscv-bootstrap/host-tools/bin
-PATH            := $(HOST_TOOLS):$(PATH)
-
 # Upstream Linux 4.15 has only bare-bones support for RISC-V.  It will
 # boot but you won't be able to use any devices.  It's not expected
 # that we will have full support for this architecture before 4.17.
@@ -19,26 +15,25 @@ vmlinux: riscv-linux/vmlinux
 	cp $^ $@
 
 riscv-linux/vmlinux: riscv-linux/.config
-	$(MAKE) -C riscv-linux ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- vmlinux
+	$(MAKE) -C riscv-linux ARCH=riscv vmlinux
 
 riscv-linux/.config: config riscv-linux/Makefile
-	$(MAKE) -C riscv-linux ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- defconfig
+	$(MAKE) -C riscv-linux ARCH=riscv defconfig
 	cat config >> $@
-	$(MAKE) -C riscv-linux ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- olddefconfig
+	$(MAKE) -C riscv-linux ARCH=riscv olddefconfig
 
 # Build bbl with embedded kernel.
 bbl: vmlinux
 	rm -f $@
 	rm -rf riscv-pk/build
 	mkdir -p riscv-pk/build
+#	Work around for https://github.com/riscv/riscv-pk/issues/87
+	cp /usr/lib/rpm/redhat/config.{guess,sub} riscv-pk/scripts/
 	cd riscv-pk/build && \
-	RISCV=$(HOST_TOOLS) \
-	../configure --prefix=$(ROOT)/bbl-tmp --host=riscv64-unknown-linux-gnu --with-payload=$(ROOT)/$<
+	../configure --prefix=$(ROOT)/bbl-tmp --with-payload=$(ROOT)/$<
 	cd riscv-pk/build && \
-	RISCV=$(HOST_TOOLS) \
 	$(MAKE)
 	cd riscv-pk/build && \
-	RISCV=$(HOST_TOOLS) \
 	$(MAKE) install
 	mv $(ROOT)/bbl-tmp/riscv64-unknown-elf/bin/bbl $@
 	rm -rf $(ROOT)/bbl-tmp
@@ -60,6 +55,7 @@ upload-kernel: bbl vmlinux
 	scp $^ fedorapeople.org:/project/risc-v/disk-images/
 
 clean:
+	$(MAKE) -C riscv-linux clean
 	rm -f *~
 	rm -f vmlinux bbl
 
@@ -70,10 +66,12 @@ boot-stage4-in-qemu: stage4-disk.img
 
 boot-in-qemu: $(DISK) bbl
 	qemu-system-riscv64 \
-	    -nographic -machine virt -m 2G \
+	    -nographic -machine virt -smp 4 -m 4G \
 	    -kernel bbl \
-	    -append "console=ttyS0 ro root=/dev/vda init=/init" \
+	    -object rng-random,filename=/dev/urandom,id=rng0 \
+	    -device virtio-rng-device,rng=rng0 \
+	    -append "ro root=/dev/vda" \
+	    -drive file=$(DISK),format=raw,if=none,id=hd0 \
 	    -device virtio-blk-device,drive=hd0 \
-	    -drive file=$(DISK),format=raw,id=hd0 \
 	    -device virtio-net-device,netdev=usernet \
-	    -netdev user,id=usernet$${TELNET:+,hostfwd=tcp::10000-:23}
+	    -netdev user,id=usernet

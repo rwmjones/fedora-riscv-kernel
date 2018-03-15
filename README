@@ -8,13 +8,14 @@ project.
 The actual Linux kernel source comes from the following fork:
 https://github.com/riscv/riscv-linux
 
+NB: This must be run on an existing Fedora/RISC-V build host or VM.
+It cannot be cross-compiled.
+
 Requirements:
 
- - Fedora 24+ (eg. x86_64) host.
-
- - The cross-compiler toolchain.  We don't package this, but you can
-   either build it yourself or get it from
-   https://github.com/rwmjones/fedora-riscv-bootstrap
+ - Fedora/RISC-V
+   see: https://fedoraproject.org/wiki/Architectures/RISC-V
+        https://fedorapeople.org/groups/risc-v/disk-images/
 
 Build the kernel:
 
@@ -27,9 +28,6 @@ Test the kernel:
  - Get a stage4 disk image, for example from
    https://fedorapeople.org/groups/risc-v/
 
- - Get qemu-system-riscv from:
-
-     dnf copr enable rjones/riscv
-     dnf install riscv-qemu
+ - Get qemu-system-riscv64.
 
  - Run 'make boot-stage4-in-qemu'
