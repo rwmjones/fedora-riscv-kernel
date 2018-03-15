@@ -30,7 +30,10 @@ bbl: vmlinux
 #	Work around for https://github.com/riscv/riscv-pk/issues/87
 	cp /usr/lib/rpm/redhat/config.{guess,sub} riscv-pk/scripts/
 	cd riscv-pk/build && \
-	../configure --prefix=$(ROOT)/bbl-tmp --with-payload=$(ROOT)/$<
+	../configure \
+	    --prefix=$(ROOT)/bbl-tmp \
+	    --with-payload=$(ROOT)/$< \
+	    --enable-logo
 	cd riscv-pk/build && \
 	$(MAKE)
 	cd riscv-pk/build && \
