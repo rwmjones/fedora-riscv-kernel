@@ -27,8 +27,6 @@ bbl: vmlinux
 	rm -f $@
 	rm -rf riscv-pk/build
 	mkdir -p riscv-pk/build
-#	Work around for https://github.com/riscv/riscv-pk/issues/87
-	cp /usr/lib/rpm/redhat/config.{guess,sub} riscv-pk/scripts/
 	cd riscv-pk/build && \
 	../configure \
 	    --prefix=$(ROOT)/bbl-tmp \
