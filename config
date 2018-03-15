@@ -17,7 +17,7 @@ CONFIG_SCSI_VIRTIO=y
 CONFIG_BLK_DEV=y
 CONFIG_BLK_DEV_LOOP=y
 
-# So we can use ext4 in the stage 4 disk (not impl yet).
+# The stage4 root filesystem is ext4.
 CONFIG_EXT4_FS=y
 
 # Needed to avoid cap_set_file errors when installing RPMs.
