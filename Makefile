@@ -15,15 +15,18 @@ vmlinux: riscv-linux/vmlinux
 	cp $^ $@
 
 riscv-linux/vmlinux: riscv-linux/.config
+	test $$(uname -m) = "riscv64"
 	$(MAKE) -C riscv-linux ARCH=riscv vmlinux
 
 riscv-linux/.config: config riscv-linux/Makefile
+	test $$(uname -m) = "riscv64"
 	$(MAKE) -C riscv-linux ARCH=riscv defconfig
 	cat config >> $@
 	$(MAKE) -C riscv-linux ARCH=riscv olddefconfig
 
 # Build bbl with embedded kernel.
 bbl: vmlinux
+	test $$(uname -m) = "riscv64"
 	rm -f $@
 	rm -rf riscv-pk/build
 	mkdir -p riscv-pk/build
@@ -41,6 +44,7 @@ bbl: vmlinux
 
 # Kernel headers RPM.
 RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm: vmlinux kernel-headers.spec
+	test $$(uname -m) = "riscv64"
 	rm -rf kernel-headers
 	mkdir -p kernel-headers/usr
 	$(MAKE) -C riscv-linux ARCH=riscv headers_install INSTALL_HDR_PATH=$(ROOT)/kernel-headers/usr
