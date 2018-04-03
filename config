@@ -95,3 +95,6 @@ CONFIG_XFS_POSIX_ACL=y
 # WARNING: tcmsg: [Errno 2] No such file or directory: '/proc/net/psched'
 # WARNING: the tc subsystem functionality is limited
 CONFIG_NET_SCHED=y
+
+# For NBD booting.
+CONFIG_BLK_DEV_NBD=y
