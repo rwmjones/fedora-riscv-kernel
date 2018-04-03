@@ -15,6 +15,12 @@ KERNEL_VERSION   = 4.15.0
 # The version of Fedora we are building for.
 FEDORA           = 27
 
+# Server and export containing NFS root unpacked from the stage4 disk
+# image from https://fedorapeople.org/groups/risc-v/disk-images/
+# NB: NFSv4 DOES NOT WORK (for nfsroot).  You must set up the server
+# to serve NFSv3.
+NFSROOT          = 192.168.0.220:/mnt/riscv,nfsvers=3
+
 all: vmlinux bbl RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm
 
 vmlinux: riscv-linux/vmlinux
@@ -24,10 +30,15 @@ riscv-linux/vmlinux: riscv-linux/.config
 	test $$(uname -m) = "riscv64"
 	$(MAKE) -C riscv-linux ARCH=riscv vmlinux
 
+# Kernel command line has to be embedded in the kernel.
+CMDLINE="root=/dev/nfs rw nfsroot=$(NFSROOT) nfsrootdebug rootfstype=nfs rootdelay=5 ip=dhcp rootwait"
+
 riscv-linux/.config: config riscv-linux/Makefile
 	test $$(uname -m) = "riscv64"
 	$(MAKE) -C riscv-linux ARCH=riscv defconfig
 	cat config >> $@
+	echo 'CONFIG_CMDLINE_BOOL=y' >> $@
+	echo 'CONFIG_CMDLINE=$(CMDLINE)' >> $@
 	$(MAKE) -C riscv-linux ARCH=riscv olddefconfig
 
 # Build bbl with embedded kernel.
@@ -70,19 +81,12 @@ clean:
 	rm -f *~
 	rm -f vmlinux bbl
 
-# This is for test-booting the kernel against a stage4 disk
-# image from https://fedorapeople.org/groups/risc-v/
-boot-stage4-in-qemu: stage4-disk.img
-	$(MAKE) boot-in-qemu DISK=$<
-
-boot-in-qemu: $(DISK) bbl
+# Test boot against the NFS server using qemu.
+boot-stage4-in-qemu:
 	qemu-system-riscv64 \
 	    -nographic -machine virt -smp 4 -m 4G \
 	    -kernel bbl \
 	    -object rng-random,filename=/dev/urandom,id=rng0 \
 	    -device virtio-rng-device,rng=rng0 \
-	    -append "ro root=/dev/vda" \
-	    -drive file=$(DISK),format=raw,if=none,id=hd0 \
-	    -device virtio-blk-device,drive=hd0 \
 	    -device virtio-net-device,netdev=usernet \
 	    -netdev user,id=usernet

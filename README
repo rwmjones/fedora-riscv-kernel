@@ -1,3 +1,6 @@
+This is the sifive_u540 branch which contains changes for the
+SiFive HiFive Unleashed U540 board with an NFS root filesystem.
+
 The Linux kernel for the Fedora/RISC-V project.
 https://fedoraproject.org/wiki/Architectures/RISC-V
 
@@ -19,6 +22,17 @@ Requirements:
 
  - Install the kernel dependencies into the VM environment.  One
    way is to run 'dnf builddep kernel.spec'
+
+You must set up an NFSv3 server, serving the stage4-disk.img from
+https://fedorapeople.org/groups/risc-v/disk-images/
+
+Inside the disk image (ie. NFS root filesystem) you have to mask the
+network service, since networking is set up by the kernel.  Do:
+  cd /mnt/riscv/etc/systemd/system
+  ln -s /dev/null systemd-networkd.service
+
+In this Makefile you must set the variable (NFSROOT) to match your NFS
+server.
 
 Build the kernel:
 
