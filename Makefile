@@ -45,7 +45,7 @@ bbl: vmlinux
 	$(MAKE)
 	cd riscv-pk/build && \
 	$(MAKE) install
-	mv $(ROOT)/bbl-tmp/riscv64-unknown-elf/bin/bbl $@
+	mv $(ROOT)/bbl-tmp/bin/bbl $@
 	rm -rf $(ROOT)/bbl-tmp
 
 # Kernel headers RPM.
