@@ -1,5 +1,11 @@
 ROOT            := $(shell pwd)
 
+# We don't normally use cross-compilation, BUT where it's necessary
+# these lines can be uncommented to cross-compile riscv-linux/vmlinux ONLY.
+#HOST_TOOLS      := $(ROOT)/../fedora-riscv-bootstrap/host-tools/bin
+#PATH            := $(HOST_TOOLS):$(PATH)
+#export CROSS_COMPILE := riscv64-unknown-linux-gnu-
+
 # Upstream Linux 4.15 has only bare-bones support for RISC-V.  It will
 # boot but you won't be able to use any devices.  It's not expected
 # that we will have full support for this architecture before 4.17.
