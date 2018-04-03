@@ -21,7 +21,7 @@ Build the kernel:
 
  - Run 'make'
 
-The result is the 'vmlinux' file.  Note we do not use modules.
+The result is the 'bbl' file.  Note we do not use modules.
 
 Test the kernel:
 
