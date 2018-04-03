@@ -17,6 +17,9 @@ Requirements:
    see: https://fedoraproject.org/wiki/Architectures/RISC-V
         https://fedorapeople.org/groups/risc-v/disk-images/
 
+ - Install the kernel dependencies into the VM environment.  One
+   way is to run 'dnf builddep kernel.spec'
+
 Build the kernel:
 
  - Run 'make'
