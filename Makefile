@@ -21,7 +21,7 @@ FEDORA           = 27
 # to serve NFSv3.
 NFSROOT          = 192.168.0.220:/mnt/riscv,nfsvers=3
 
-all: vmlinux bbl RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm
+all: vmlinux bbl bbl.u540 RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm
 
 vmlinux: riscv-linux/vmlinux
 	cp $^ $@
@@ -58,6 +58,14 @@ bbl: vmlinux
 	$(MAKE) install
 	mv $(ROOT)/bbl-tmp/bin/bbl $@
 	rm -rf $(ROOT)/bbl-tmp
+
+# The final bbl binary that can be copied into the boot partition.
+bbl.u540: bbl
+	objcopy \
+	    -O binary \
+	    --strip-all \
+	    --change-addresses -0x80000000 \
+	    $< $@
 
 # Kernel headers RPM.
 RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm: vmlinux kernel-headers.spec

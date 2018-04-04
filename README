@@ -38,7 +38,7 @@ Build the kernel:
 
  - Run 'make'
 
-The result is the 'bbl' file.  Note we do not use modules.
+The result is the 'bbl.u540' file.  Note we do not use modules.
 
 Test the kernel:
 
@@ -48,3 +48,7 @@ Test the kernel:
  - Get qemu-system-riscv64.
 
  - Run 'make boot-stage4-in-qemu'
+
+Boot on the real hardware:
+
+ - Copy bbl.u540 over the first partition of the SD card.
