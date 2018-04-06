@@ -149,3 +149,6 @@ CONFIG_NET_SCHED=y
 
 # For NBD booting.
 CONFIG_BLK_DEV_NBD=y
+
+# Debugging.
+CONFIG_STACKTRACE=y
