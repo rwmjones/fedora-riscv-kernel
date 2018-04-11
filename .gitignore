@@ -5,6 +5,7 @@
 
 /bbl
 /bbl.u540
+/initramfs.cpio.gz
 /kernel-headers.spec
 /stage4-disk.img
 /vmlinux

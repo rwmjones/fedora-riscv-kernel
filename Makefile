@@ -15,11 +15,11 @@ KERNEL_VERSION   = 4.15.0
 # The version of Fedora we are building for.
 FEDORA           = 27
 
-# Server and export containing NFS root unpacked from the stage4 disk
-# image from https://fedorapeople.org/groups/risc-v/disk-images/
-# NB: NFSv4 DOES NOT WORK (for nfsroot).  You must set up the server
-# to serve NFSv3.
-NFSROOT          = 192.168.0.220:/mnt/riscv,nfsvers=3
+# NBD server IP address and port or export name.
+NBD              = 192.168.0.220:/
+
+# XXX Fix stage4 to use a label.
+ROOTFS           = UUID=e06a1845-3577-4e35-92a9-015b3042b3f2
 
 all: vmlinux bbl bbl.u540 RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm
 
@@ -31,15 +31,35 @@ riscv-linux/vmlinux: riscv-linux/.config
 	$(MAKE) -C riscv-linux ARCH=riscv vmlinux
 
 # Kernel command line has to be embedded in the kernel.
-CMDLINE="root=/dev/nfs rw nfsroot=$(NFSROOT) nfsrootdebug rootfstype=nfs rootdelay=5 ip=dhcp rootwait"
+CMDLINE="root=$(ROOTFS) netroot=nbd:$(NBD) rootfstype=ext4 rw rootdelay=5 ip=dhcp rootwait console=ttyS0"
 
-riscv-linux/.config: config riscv-linux/Makefile
+riscv-linux/.config: config riscv-linux/Makefile initramfs.cpio.gz
 	test $$(uname -m) = "riscv64"
 	$(MAKE) -C riscv-linux ARCH=riscv defconfig
 	cat config >> $@
 	echo 'CONFIG_CMDLINE_BOOL=y' >> $@
 	echo 'CONFIG_CMDLINE=$(CMDLINE)' >> $@
+	echo 'CONFIG_INITRAMFS_SOURCE="$(ROOT)/initramfs.cpio.gz"' >> $@
 	$(MAKE) -C riscv-linux ARCH=riscv olddefconfig
+# 'touch' here is necessary because for some reason kbuild doesn't
+# set up dependencies right so that this file is rebuilt if CMDLINE
+# changes
+	touch riscv-linux/drivers/of/fdt.c
+
+# Note that CONFIG_INITRAMFS_SOURCE requires the initramfs has
+# this exact name.
+initramfs.cpio.gz:
+	@if [ `id -u` -ne 0 ]; then \
+	    echo "You must run this rule as root:"; \
+	    echo "  sudo make $@"; \
+	    exit 1; \
+	fi
+	rm -f $@-t $@
+# NB: dracut does NOT resolve dependencies.  You must (somehow) know
+# the list of module dependencies and add them yourself.
+	dracut -m "nbd network base" $@-t $$(uname -r) --no-kernel --force -v
+	chmod 0644 $@-t
+	mv $@-t $@
 
 # Build bbl with embedded kernel.
 bbl: vmlinux
@@ -89,7 +109,7 @@ clean:
 	rm -f *~
 	rm -f vmlinux bbl
 
-# Test boot against the NFS server using qemu.
+# Test boot against the NBD server using qemu.
 boot-stage4-in-qemu:
 	qemu-system-riscv64 \
 	    -nographic -machine virt -smp 4 -m 4G \

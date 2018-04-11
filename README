@@ -1,5 +1,5 @@
 This is the sifive_u540 branch which contains changes for the
-SiFive HiFive Unleashed U540 board with an NFS root filesystem.
+SiFive HiFive Unleashed U540 board with an NBD-backed root filesystem.
 
 The Linux kernel for the Fedora/RISC-V project.
 https://fedoraproject.org/wiki/Architectures/RISC-V
@@ -20,23 +20,35 @@ Requirements:
    see: https://fedoraproject.org/wiki/Architectures/RISC-V
         https://fedorapeople.org/groups/risc-v/disk-images/
 
+ - Install 'nbd' and 'dracut-network' into the VM environment.
+
  - Install the kernel dependencies into the VM environment.  One
    way is to run 'dnf builddep kernel.spec'
 
-You must set up an NFSv3 server, serving the stage4-disk.img from
+You must set up an NBD server, serving the stage4-disk.img from
 https://fedorapeople.org/groups/risc-v/disk-images/
 
-Inside the disk image (ie. NFS root filesystem) you have to mask the
+  qemu-nbd -t -f raw -x / stage4-disk.img
+
+Note this is served on port 10809 by default, you may need to open
+this port on the firewall.
+
+Inside the disk image (ie. root filesystem) you have to mask the
 network service, since networking is set up by the kernel.  Do:
+
   cd /mnt/riscv/etc/systemd/system
   ln -s /dev/null systemd-networkd.service
 
-In this Makefile you must set the variable (NFSROOT) to match your NFS
+In this Makefile you must set the variable $(NBD) to match your NBD
 server.
+
+Build the initramfs (as root):
+
+ - sudo make initramfs.cpio.gz
 
 Build the kernel:
 
- - Run 'make'
+ - make
 
 The result is the 'bbl.u540' file.  Note we do not use modules.
 
