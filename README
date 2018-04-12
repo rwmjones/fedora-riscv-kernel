@@ -33,12 +33,6 @@ https://fedorapeople.org/groups/risc-v/disk-images/
 Note this is served on port 10809 by default, you may need to open
 this port on the firewall.
 
-Inside the disk image (ie. root filesystem) you have to mask the
-network service, since networking is set up by the kernel.  Do:
-
-  cd /mnt/riscv/etc/systemd/system
-  ln -s /dev/null systemd-networkd.service
-
 In this Makefile you must set the variable $(NBD) to match your NBD
 server.
 
