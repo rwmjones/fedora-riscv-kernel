@@ -31,7 +31,7 @@ riscv-linux/vmlinux: riscv-linux/.config
 	$(MAKE) -C riscv-linux ARCH=riscv vmlinux
 
 # Kernel command line has to be embedded in the kernel.
-CMDLINE="root=$(ROOTFS) netroot=nbd:$(NBD) rootfstype=ext4 rw rootdelay=5 ip=dhcp rootwait console=ttyS0"
+CMDLINE="root=$(ROOTFS) netroot=nbd:$(NBD) rootfstype=ext4 rw rootdelay=5 ip=dhcp rootwait console=ttySI0"
 
 riscv-linux/.config: config riscv-linux/Makefile initramfs.cpio.gz
 	test $$(uname -m) = "riscv64"
