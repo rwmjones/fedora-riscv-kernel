@@ -76,7 +76,13 @@ bbl: vmlinux
 	$(MAKE)
 	cd riscv-pk/build && \
 	$(MAKE) install
-	mv $(ROOT)/bbl-tmp/bin/bbl $@
+	if test -f $(ROOT)/bbl-tmp/bin/bbl; then \
+		mv $(ROOT)/bbl-tmp/bin/bbl $@; \
+	elif test -f $(ROOT)/bbl-tmp/riscv64-unknown-elf/bin/bbl; then \
+		mv $(ROOT)/bbl-tmp/riscv64-unknown-elf/bin/bbl $@; \
+	else \
+		exit 1; \
+	fi
 	rm -rf $(ROOT)/bbl-tmp
 
 # The final bbl binary that can be copied into the boot partition.
