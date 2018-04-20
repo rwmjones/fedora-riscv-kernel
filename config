@@ -98,6 +98,7 @@ CONFIG_IP_NF_RAW=y
 CONFIG_IP6_NF_NAT=y
 CONFIG_IP6_NF_FILTER=y
 CONFIG_IP6_NF_IPTABLES=y
+CONFIG_NETFILTER_XT_MATCH_STATE=y
 
 # For systemd:
 # https://cgit.freedesktop.org/systemd/systemd/tree/README
