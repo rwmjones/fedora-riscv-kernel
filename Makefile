@@ -107,8 +107,8 @@ kernel-headers.spec: kernel-headers.spec.in
 	sed -e 's,@ROOT@,$(ROOT),g' -e 's,@KERNEL_VERSION@,$(KERNEL_VERSION),g' < $^ > $@-t
 	mv $@-t $@
 
-upload-kernel: bbl vmlinux
-	scp $^ fedorapeople.org:/project/risc-v/disk-images/
+upload-kernel: bbl.u540 readme.u540.txt
+	scp $^ fedorapeople.org:/project/risc-v/disk-images/hifive-unleashed/
 
 clean:
 	$(MAKE) -C riscv-linux clean
