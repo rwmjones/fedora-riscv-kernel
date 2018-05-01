@@ -15,7 +15,9 @@ KERNEL_VERSION   = 4.15.0
 # The version of Fedora we are building for.
 FEDORA           = 27
 
-all: vmlinux bbl RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm
+all: vmlinux bbl \
+	RPMS/noarch/kernel-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm \
+	RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm
 
 vmlinux: riscv-linux/vmlinux
 	cp $^ $@
@@ -54,7 +56,15 @@ bbl: vmlinux
 	fi
 	rm -rf $(ROOT)/bbl-tmp
 
-# Kernel headers RPM.
+# Kernel and kernel headers interim RPMs.
+RPMS/noarch/kernel-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm: kernel.spec
+	rpmbuild -ba kernel.spec --define "_topdir $(ROOT)"
+
+kernel.spec: kernel.spec.in
+	rm -f $@ $@-t
+	sed -e 's,@ROOT@,$(ROOT),g' -e 's,@KERNEL_VERSION@,$(KERNEL_VERSION),g' < $^ > $@-t
+	mv $@-t $@
+
 RPMS/noarch/kernel-headers-$(KERNEL_VERSION)-1.fc$(FEDORA).noarch.rpm: vmlinux kernel-headers.spec
 	test $$(uname -m) = "riscv64"
 	rm -rf kernel-headers

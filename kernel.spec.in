@@ -1,0 +1,20 @@
+Summary:  RISC-V kernel interim package
+Name:     kernel
+Version:  @KERNEL_VERSION@
+Release:  1.fc27
+License:  GPLv2
+BuildArch: noarch
+
+Provides:  kernel(riscv64) = %{version}
+
+%description
+This is an interim and empty kernel package generated for the
+Fedora/RISC-V bootstrap.
+
+Eventually we will build this from the real kernel package,
+but for now we need this to satisfy dependencies in other packages.
+
+%files
+# empty
+
+%changelog

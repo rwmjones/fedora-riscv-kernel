@@ -4,6 +4,7 @@
 /SRPMS/*.src.rpm
 
 /bbl
+/kernel.spec
 /kernel-headers.spec
 /stage4-disk.img
 /vmlinux
