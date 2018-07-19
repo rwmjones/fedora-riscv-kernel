@@ -1,6 +1,6 @@
 [submodule "riscv-linux"]
 	path = riscv-linux
-	url = https://github.com/riscv/riscv-linux
+	url = https://github.com/rwmjones/riscv-linux
 [submodule "riscv-pk"]
 	path = riscv-pk
 	url = https://github.com/riscv/riscv-pk
