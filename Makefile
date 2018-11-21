@@ -16,6 +16,8 @@ KERNEL_VERSION   = 4.15.0
 FEDORA           = 27
 
 # NBD server IP address and port or export name.
+# If blank, will use a local filesystem (use ROOTFS to
+# set /dev/mmcblk0p2 or /dev/sda*, /dev/nvme*)
 NBD              = 192.168.0.220:/
 
 # XXX Fix stage4 to use a label.
@@ -31,7 +33,11 @@ riscv-linux/vmlinux: riscv-linux/.config
 	$(MAKE) -C riscv-linux ARCH=riscv vmlinux
 
 # Kernel command line has to be embedded in the kernel.
+ifeq (,$(NBD))
+CMDLINE="root=$(ROOTFS) ro rootwait console=ttySI0"
+else
 CMDLINE="root=$(ROOTFS) netroot=nbd:$(NBD) rootfstype=ext4 rw rootdelay=5 ip=dhcp rootwait console=ttySI0"
+endif
 
 riscv-linux/.config: config riscv-linux/Makefile initramfs.cpio.gz
 	test $$(uname -m) = "riscv64"
@@ -57,7 +63,11 @@ initramfs.cpio.gz:
 	rm -f $@-t $@
 # NB: dracut does NOT resolve dependencies.  You must (somehow) know
 # the list of module dependencies and add them yourself.
+ifeq (,$(NBD))
+	dracut -m "base" --add rootfs-block $@-t $$(uname -r) --no-kernel --force -v
+else
 	dracut -m "nbd network base" $@-t $$(uname -r) --no-kernel --force -v
+endif
 	chmod 0644 $@-t
 	mv $@-t $@
 
